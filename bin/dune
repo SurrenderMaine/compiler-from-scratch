@@ -1,0 +1,4 @@
+(executable
+ (public_name compiler_from_scratch)
+ (name main)
+ (libraries compiler_from_scratch))
