@@ -1,2 +1,3 @@
 (library
- (name compiler_from_scratch))
+ (name lib)
+ (libraries str))
