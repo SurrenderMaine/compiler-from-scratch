@@ -7,9 +7,9 @@ let compiler input =
   ()
 
 let compiler_driver filename =
-  let _ = Sys.command ("gcc -E -P " ^ filename ^ "test.i") in
+  let _ = Sys.command ("gcc -E -P " ^ filename ^ " test.i") in
   let _ = compiler "test.i" in
-  let _ = Sys.command ("gcc test.s -o test") in
+  (* let _ = Sys.command ("gcc test.s -o test") in *)
   ()
 
 let is_valid_input =
