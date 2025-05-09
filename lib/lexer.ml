@@ -3,14 +3,28 @@ let constant = Str.regexp "[0-9]+\\b"
 let int_keyword = Str.regexp "int\\b"
 let void_keyword =  Str.regexp "void\\b"
 let return_keyword = Str.regexp "return\\b"
-let open_paren = Str.regexp (Str.quote "(")
-let close_paren = Str.regexp (Str.quote ")")
+let open_paren = Str.regexp_string "("
+let close_paren = Str.regexp_string ")"
 let open_brace = Str.regexp "{"
 let close_brace = Str.regexp "}"
 let semicolon = Str.regexp ";"
 
-let lexer _ =
-  Format.printf "Lexing\n"
+type token = ID | Constant | Int | Void | Return | Open_Paren | Close_Paren | Open_Brace | Close_Brace | Semicolon
+
+let extract_first_token line =
+  if 
+
+let rec tokenize ic =
+  try
+    let line = input_line ic in
+    let no_whitespace = line |> String.trim in
+    let 
+    tokenize ic
+  with _ ->
+    ()
+
+let lexer input =
+  open_in input |> tokenize
 
 (* let tokenize input = 
    while input isnt empty:
