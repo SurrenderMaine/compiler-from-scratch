@@ -1,39 +1,49 @@
-let identifier = Str.regexp "[a-zA-Z_]\\w*\\b"
-let constant = Str.regexp "[0-9]+\\b"
-let int_keyword = Str.regexp "int\\b"
-let void_keyword =  Str.regexp "void\\b"
-let return_keyword = Str.regexp "return\\b"
-let open_paren = Str.regexp_string "("
-let close_paren = Str.regexp_string ")"
-let open_brace = Str.regexp "{"
-let close_brace = Str.regexp "}"
-let semicolon = Str.regexp ";"
+(* open Str *)
+open Tokens
 
-type token = ID | Constant | Int | Void | Return | Open_Paren | Close_Paren | Open_Brace | Close_Brace | Semicolon
+let remove_token token str =
+  Re.replace_string ~pos:0 token ~by:"" ~all:false str
 
-let extract_first_token line =
-  if 
+let extract_token l =
+  match l with 
+  | _ when Re.execp ~pos:0 constant_str l -> 
+    begin
+      match Re.exec_opt constant_str l with
+      | Some g -> (constant_str, Constant (Re.Group.get g 0 |> int_of_string))
+      | None -> exit 1
+    end
+  | _ when Re.execp ~pos:0 identifier_str l -> 
+    begin
+      match Re.exec_opt identifier_str l with
+      | Some g -> (identifier_str, ID (Re.Group.get g 0))
+      | None -> exit 1
+    end
+  | _ when Re.execp ~pos:0 int_str l -> (int_str, Int)
+  | _ when Re.execp ~pos:0 void_str l -> (void_str, Void)
+  | _ when Re.execp ~pos:0 return_str l -> (return_str, Return)
+  | _ when Re.execp ~pos:0 open_paren_str l -> (open_paren_str, Open_Paren)
+  | _ when Re.execp ~pos:0 close_paren_str l -> (close_paren_str, Close_Paren)
+  | _ when Re.execp ~pos:0 open_brace_str l -> (open_brace_str, Open_Brace)
+  | _ when Re.execp ~pos:0 close_brace_str l -> (close_brace_str, Close_Brace)
+  | _ when Re.execp ~pos:0 semicolon_str l -> (semicolon_str, Semicolon)
+  | _ -> Format.printf "error\n"; exit 1
 
-let rec tokenize ic =
+let rec process_line tokens l =
+  let l_nw = String.trim l in
+  if String.length l_nw > 0 then
+    let (r, t) = extract_token l_nw in
+    let l' = remove_token r l_nw in
+    process_line (t :: tokens) l'
+  else
+    tokens
+
+let rec tokenize tokens ic =
   try
     let line = input_line ic in
-    let no_whitespace = line |> String.trim in
-    let 
-    tokenize ic
+    let tokens' = line |> String.trim |> process_line tokens in
+    tokenize tokens' ic
   with _ ->
-    ()
+    List.rev tokens
 
 let lexer input =
-  open_in input |> tokenize
-
-(* let tokenize input = 
-   while input isnt empty:
-    if input starts with whitespace:
-      trim whitespace from start of input
-    else:
-      find longest match at start of input for any regex in Table 1-1
-      if no match is found, raise an error
-      convert matching substring into a token
-      remove matching substring from start of input
-  
-*)
+  open_in input |> tokenize []

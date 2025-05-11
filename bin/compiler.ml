@@ -1,7 +1,7 @@
 open Lib
 
 let compiler input =
-  Lexer.lexer input;
+  let _ = Lexer.lexer input in
   (* Parser *)
   (* Codegen *)
   ()
