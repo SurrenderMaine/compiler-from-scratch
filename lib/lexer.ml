@@ -6,6 +6,14 @@ let remove_token token str =
 
 let extract_token l =
   match l with 
+  | _ when Re.execp ~pos:0 int_str l -> (int_str, Int)
+  | _ when Re.execp ~pos:0 void_str l -> (void_str, Void)
+  | _ when Re.execp ~pos:0 return_str l -> (return_str, Return)
+  | _ when Re.execp ~pos:0 open_paren_str l -> (open_paren_str, Open_Paren)
+  | _ when Re.execp ~pos:0 close_paren_str l -> (close_paren_str, Close_Paren)
+  | _ when Re.execp ~pos:0 open_brace_str l -> (open_brace_str, Open_Brace)
+  | _ when Re.execp ~pos:0 close_brace_str l -> (close_brace_str, Close_Brace)
+  | _ when Re.execp ~pos:0 semicolon_str l -> (semicolon_str, Semicolon)
   | _ when Re.execp ~pos:0 constant_str l -> 
     begin
       match Re.exec_opt constant_str l with
@@ -18,14 +26,6 @@ let extract_token l =
       | Some g -> (identifier_str, ID (Re.Group.get g 0))
       | None -> exit 1
     end
-  | _ when Re.execp ~pos:0 int_str l -> (int_str, Int)
-  | _ when Re.execp ~pos:0 void_str l -> (void_str, Void)
-  | _ when Re.execp ~pos:0 return_str l -> (return_str, Return)
-  | _ when Re.execp ~pos:0 open_paren_str l -> (open_paren_str, Open_Paren)
-  | _ when Re.execp ~pos:0 close_paren_str l -> (close_paren_str, Close_Paren)
-  | _ when Re.execp ~pos:0 open_brace_str l -> (open_brace_str, Open_Brace)
-  | _ when Re.execp ~pos:0 close_brace_str l -> (close_brace_str, Close_Brace)
-  | _ when Re.execp ~pos:0 semicolon_str l -> (semicolon_str, Semicolon)
   | _ -> Format.printf "error\n"; exit 1
 
 let rec process_line tokens l =

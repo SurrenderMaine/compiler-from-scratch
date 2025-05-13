@@ -1,10 +1,9 @@
 open Lib
 
 let compiler input =
-  let _ = Lexer.lexer input in
-  (* Parser *)
+  Lexer.lexer input |>
+  Parser.parse
   (* Codegen *)
-  ()
 
 let compiler_driver input =
   let dir = Filename.dirname input in

@@ -15,7 +15,7 @@ let semicolon_str       = Re.Pcre.regexp "^;"
 
 
 let token_to_string = function
-| ID s -> s
+| ID s -> "ID " ^ s
 | Constant c -> string_of_int c
 | Int -> "int"
 | Void -> "void"
