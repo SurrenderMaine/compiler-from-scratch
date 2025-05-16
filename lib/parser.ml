@@ -1,22 +1,22 @@
 open Tokens
 
-type identifier = Ident of string
-type expression = Const of int 
-type statement = Ret of expression
-type func_def = Fun of identifier * statement
-type program = Program of func_def
+type identifier = AST_ID of string
+type expression = AST_Constant of int 
+type statement = AST_Return of expression
+type func_def = AST_Function of identifier * statement
+type program = AST_Program of func_def
 
 let print_expression = function
-| Const i -> "Constant ( " ^ string_of_int i ^ " )"
+| AST_Constant i -> "AST_Constantant ( " ^ string_of_int i ^ " )"
 
 let print_statement = function
-| Ret expr -> "Return( " ^ print_expression expr ^ " )"
+| AST_Return expr -> "AST_Returnurn( " ^ print_expression expr ^ " )"
 
 let print_fun = function
-| Fun (Ident id, st) -> "Function( name=\"" ^ id ^ "\", body=" ^ print_statement st ^ " )"
+| AST_Function (AST_ID id, st) -> "Function( name=\"" ^ id ^ "\", body=" ^ print_statement st ^ " )"
 
 let print_ast = function
-| Program f -> Format.printf "Program( %s )\n" (print_fun f)
+| AST_Program f -> Format.printf "AST_Program( %s )\n" (print_fun f)
 
 let expect_error expected actual =
     let expected_str = token_to_string expected in
@@ -39,17 +39,17 @@ let expect expected tokens =
     | _ -> Format.fprintf Format.err_formatter "Parsing error: Empty list passed to expect\n"; exit 1
 
 let parse_expression = function
-| Constant c :: xs -> (xs, Const c)
+| Constant c :: xs -> (xs, AST_Constant c)
 | _ -> Format.printf "Parsing error: Expression\n"; exit 1
 
 let parse_identifier = function
-| ID s :: xs -> (xs, Ident s)
-| _ -> Format.printf "Parsing error: Identifier\n"; exit 1
+| ID s :: xs -> (xs, AST_ID s)
+| _ -> Format.printf "Parsing error: AST_IDifier\n"; exit 1
 
 let parse_statement tokens =
     let (tokens', return_val) = expect Return tokens |> parse_expression in
     let tokens'' = expect Semicolon tokens' in
-    (tokens'', Ret return_val)
+    (tokens'', AST_Return return_val)
 
 let parse_function tokens =
     let (tokens', id) = expect Int tokens |> parse_identifier in
@@ -58,8 +58,8 @@ let parse_function tokens =
                         expect Close_Paren |>
                         expect Open_Brace |>
     parse_statement in
-    (expect Close_Brace tokens'', Fun (id, s))
+    (expect Close_Brace tokens'', AST_Function (id, s))
 
 let parse tokens = 
     let (_, p) = parse_function tokens in
-    print_ast (Program p)
+    AST_Program p

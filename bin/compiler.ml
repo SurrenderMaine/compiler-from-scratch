@@ -1,17 +1,19 @@
 open Lib
 
-let compiler input =
+let compiler input output =
   Lexer.lexer input |>
-  Parser.parse
-  (* Codegen *)
+  Parser.parse |>
+  Assembly.emit output
 
 let compiler_driver input =
   let dir = Filename.dirname input in
   let file = Filename.basename input |> Filename.remove_extension in
   let pp_file = Filename.concat dir file ^ ".i" in
+  let s_file = Filename.concat dir file ^ ".s" in
+  let executable = Filename.concat dir file in
   let _ = Sys.command ("gcc -E -P " ^ input ^ " -o " ^ pp_file) in
-  let _ = compiler pp_file in
-  (* let _ = Sys.command ("gcc test.s -o test") in *)
+  let _ = compiler pp_file s_file in
+  let _ = Sys.command ("gcc " ^ s_file ^ " -o " ^ executable) in
   ()
 
 let is_valid_input =
