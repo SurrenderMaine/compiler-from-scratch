@@ -14,6 +14,9 @@ let extract_token l =
   | _ when Re.execp ~pos:0 open_brace_str l -> (open_brace_str, Open_Brace)
   | _ when Re.execp ~pos:0 close_brace_str l -> (close_brace_str, Close_Brace)
   | _ when Re.execp ~pos:0 semicolon_str l -> (semicolon_str, Semicolon)
+  | _ when Re.execp ~pos:0 complement_str l -> (complement_str, Complement)
+  | _ when Re.execp ~pos:0 decrement_str l -> (decrement_str, Decrement)
+  | _ when Re.execp ~pos:0 negate_str l -> (negate_str, Negate)
   | _ when Re.execp ~pos:0 constant_str l -> 
     begin
       match Re.exec_opt constant_str l with
